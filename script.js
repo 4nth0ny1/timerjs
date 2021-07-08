@@ -1,4 +1,3 @@
-const date = new Date()
 let timer = null
 const container = document.querySelector('.container')
 const time = document.querySelector('.time')
@@ -35,8 +34,12 @@ function stopClock(){
 }
 
 function setStartTimeStamp(){
+    const startTime = new Date()
+    const timeContainer = document.createElement('div')
     const startTimeStamp = document.createElement('p')
     const input = document.createElement('input')
+
+    timeContainer.classList.add('time-container')
 
     input.innerHTML = 
     `
@@ -44,27 +47,59 @@ function setStartTimeStamp(){
             Activity: <input type="text" name="activity">
         </form>
     `
-    startTimeStamp.textContent = `Start Time: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+    startTimeStamp.innerHTML = `
+    
+        Start Time: <span class="start-time">${startTime.getHours()}:${startTime.getMinutes()}:${startTime.getSeconds()}</span>
+    `
 
-    container.append(startTimeStamp)
-    container.append(input)
+    timeContainer.append(startTimeStamp)
+    timeContainer.append(input)
+    container.append(timeContainer)
 }
 
 function setStopTimeStamp(){
     const endTime = new Date()
+    const nodes = document.querySelectorAll('.time-container')
+    const timeContainer = nodes[nodes.length - 1]
     const stopTimeStamp = document.createElement('p')
     const hr = document.createElement('p')
 
-    stopTimeStamp.textContent = `End Time: ${endTime.getHours()}:${endTime.getMinutes()}:${endTime.getSeconds()}`
-    hr.innerHTML = `<hr>`
+    stopTimeStamp.innerHTML = `
+        End Time: <span class="end-time">${endTime.getHours()}:${endTime.getMinutes()}:${endTime.getSeconds()}</span>
+    `
     time.textContent = ""
     
-    container.append(stopTimeStamp)
-    container.append(hr)
+    timeContainer.append(stopTimeStamp)
 
-    
-
-    // the input needs to be saved and stored on the page with the start and end time. 
+    getTimeDifference()
 }
 
+function getTimeDifference(){
+    const nodes = document.querySelectorAll('.end-time')
+    const endTime = nodes[nodes.length - 1].textContent
+
+    const startNodes = document.querySelectorAll('.start-time')
+    const startTime = startNodes[startNodes.length - 1].textContent
+
+    const difference = toSeconds(endTime) - toSeconds(startTime)
+    const timeContainerNodes = document.querySelectorAll('.time-container')
+
+    const lastNode = timeContainerNodes[timeContainerNodes.length - 1]
+
+    const p = document.createElement('p')
+
+    p.textContent = `Time Difference: ${difference} seconds`
+
+    lastNode.appendChild(p)
+}
+
+
+function toSeconds(hms){
+    var a = hms.split(':') // split it at the colons
+
+    // minutes are worth 60 seconds. Hours are worth 60 minutes.
+    var seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2])
+
+    return seconds
+}
 
